@@ -1,0 +1,1 @@
+{"text_files": ["data/relevant_train.jsonl", "data/relevant_val.jsonl", "data/relevant_test.jsonl"], "output_root": "features/clip_text_features", "max_length": 32, "bsz": 100, "model_name": "clip", "debug": false}

@@ -7,8 +7,14 @@ results_root=results
 exp_id=exp
 
 ######## data paths
-train_path=data/highlight_train_release.jsonl
-eval_path=data/highlight_val_release.jsonl
+# train_path=../labels/honor/highlight_train_release.jsonl
+# eval_path=../labels/honor/highlight_val_release.jsonl
+# train_path=../labels/ying/highlight_train_release.jsonl
+# eval_path=../labels/ying/highlight_val_release.jsonl
+# train_path=../labels/dota2/highlight_train_release.jsonl
+# eval_path=../labels/dota2/highlight_val_release.jsonl
+train_path=../labels/total/highlight_train_release.jsonl
+eval_path=../labels/total/highlight_val_release.jsonl
 eval_split_name=val
 
 ######## setup video+text features
@@ -28,7 +34,7 @@ fi
 
 # text features
 if [[ ${t_feat_type} == "clip" ]]; then
-  t_feat_dir=${feat_root}/umt_clip_text_features/
+  t_feat_dir=${feat_root}/clip_text_features/
   t_feat_dim=512
 else
   echo "Wrong arg for t_feat_type."
@@ -37,7 +43,7 @@ fi
 
 # audio features
 if [[ ${a_feat_type} == "pann" ]]; then
-  a_feat_dir=${feat_root}/umt_pann_features/
+  a_feat_dir=${feat_root}/pann_features/
   a_feat_dim=2050
 else
   echo "Wrong arg for t_feat_type."
@@ -46,6 +52,8 @@ fi
 
 #### training
 bsz=32
+max_windows=25
+num_queries=25
 
 
 PYTHONPATH=$PYTHONPATH:. python qd_detr/train.py \

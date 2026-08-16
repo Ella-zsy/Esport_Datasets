@@ -47,7 +47,7 @@ def eval_epoch_post_processing(submission, opt, gt_data, save_submission_filenam
     submission_path = os.path.join(opt.results_dir, save_submission_filename)
     save_jsonl(submission, submission_path)
 
-    if opt.eval_split_name in ["test"]:  # since test_public has no GT
+    if opt.eval_split_name in ["val","test"]:  # since test_public has no GT
         metrics = eval_submission(
             submission, gt_data,
             verbose=opt.debug, match_number=not opt.debug

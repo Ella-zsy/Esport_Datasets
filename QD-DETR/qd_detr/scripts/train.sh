@@ -6,8 +6,14 @@ results_root=results
 exp_id=exp
 
 ######## data paths
-train_path=data/highlight_train_release.jsonl
-eval_path=data/highlight_val_release.jsonl
+# train_path=../labels/honor/highlight_train_release.jsonl
+# val_path=../labels/honor/highlight_val_release.jsonl
+# train_path=../labels/ying/highlight_train_release.jsonl
+# eval_path=../labels/ying/highlight_val_release.jsonl
+# train_path=../labels/dota2/highlight_train_release.jsonl
+# eval_path=../labels/dota2/highlight_val_release.jsonl
+train_path=../labels/total/highlight_train_release.jsonl
+eval_path=../labels/total/highlight_val_release.jsonl
 eval_split_name=val
 
 ######## setup video+text features
@@ -36,6 +42,8 @@ fi
 
 #### training
 bsz=32
+max_windows=25
+num_queries=25
 
 
 PYTHONPATH=$PYTHONPATH:. python qd_detr/train.py \
@@ -49,6 +57,8 @@ PYTHONPATH=$PYTHONPATH:. python qd_detr/train.py \
 --t_feat_dir ${t_feat_dir} \
 --t_feat_dim ${t_feat_dim} \
 --bsz ${bsz} \
+--max_windows ${max_windows} \
+--num_queries ${num_queries} \
 --results_root ${results_root} \
 --exp_id ${exp_id} \
 ${@:1}

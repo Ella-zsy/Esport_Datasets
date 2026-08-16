@@ -1,22 +1,26 @@
 dset_name=hl
 ctx_mode=video_tef
 #v_feat_types=clip
-#v_feat_types=slowfast_clip
-v_feat_types=slowfast_clip_blip
-#t_feat_types=clip
-t_feat_types=clip_blip
-results_root=results/qvhighlights/Final
+v_feat_types=slowfast_clip
+#v_feat_types=slowfast_clip_blip
+t_feat_types=clip
+#t_feat_types=clip_blip
+results_root=res
 exp_id=exp
 
 ######## data paths
-train_path=data/highlight_train_release.jsonl
-#train_path=data/highlight_train_release_paraphrased.jsonl
-#train_path=data/highlight_train_release_paraphrased_openai.jsonl
-eval_path=data/highlight_val_release.jsonl
+# train_path=../labels/honor/highlight_train_release.jsonl
+# eval_path=../labels/honor/highlight_val_release.jsonl
+# train_path=../labels/ying/highlight_train_release.jsonl
+# eval_path=../labels/ying/highlight_val_release.jsonl
+# train_path=../labels/dota2/highlight_train_release.jsonl
+# eval_path=../labels/dota2/highlight_val_release.jsonl
+train_path=../labels/total/highlight_train_release.jsonl
+eval_path=../labels/total/highlight_val_release.jsonl
 eval_split_name=val
 
 ######## setup video+text features
-feat_root=../Datasets/qvhl/features
+feat_root=../features
 
 # video features
 v_feat_dim=0
@@ -80,9 +84,8 @@ PYTHONPATH=$PYTHONPATH:. python video_lights/train.py \
 --contrastive_align_loss \
 --contrastive_align_loss_coef ${contrastive_align_loss_coef} \
 --results_root ${results_root} \
---exp_id exp-bicmf_${bicmf_layers}-en_${enc_layers}-dec_${dec_layers}-tcl-hl-scsl-cal_${contrastive_align_loss_coef}-${v_feat_types}-seed_${seed} \
 --device 0 \
 --hidden_dim 256 \
---seed ${seed}
+--seed ${seed} \
 ${@:1}
 

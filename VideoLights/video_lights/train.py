@@ -200,7 +200,8 @@ def train(model, criterion, optimizer, lr_scheduler, train_dataset, val_dataset,
                 tb_writer.add_scalar(f"Eval/{k}", float(v), epoch_i+1)
 
             # stop_score = metrics["brief"][opt.main_metric]
-            stop_score = calculate_stop_score(metrics["brief"], opts=opt)
+            # stop_score = calculate_stop_score(metrics["brief"], opts=opt)
+            stop_score = metrics["brief"]["HL-min-VeryGood-mAP"]
 
             if stop_score > prev_best_score:
                 es_cnt = 0

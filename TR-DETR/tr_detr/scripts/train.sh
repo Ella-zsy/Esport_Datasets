@@ -2,16 +2,21 @@ dset_name=hl
 ctx_mode=video_tef
 v_feat_types=slowfast_clip
 t_feat_type=clip 
-results_root=test-tr-detr
-exp_id=exp
+results_root=checkpoint
 
 ######## data paths
-train_path=data/highlight_train_release.jsonl
-eval_path=data/highlight_val_release.jsonl
+# train_path=../labels/honor/highlight_train_release.jsonl
+# eval_path=../labels/honor/highlight_val_release.jsonl
+# train_path=../labels/ying/highlight_train_release.jsonl
+# eval_path=../labels/ying/highlight_val_release.jsonl
+# train_path=../labels/dota2/highlight_train_release.jsonl
+# eval_path=../labels/dota2/highlight_val_release.jsonl
+train_path=../labels/total/highlight_train_release.jsonl
+eval_path=../labels/total/highlight_val_release.jsonl
 eval_split_name=val
 
 ######## setup video+text features
-feat_root= .../
+feat_root=../features
 
 
 # video features
@@ -46,6 +51,8 @@ VTC_loss_coef=0.3
 CTC_loss_coef=0.5
 # use_txt_pos=True
 label_loss_coef=4
+max_windows=25
+num_queries=25
 
 
 PYTHONPATH=$PYTHONPATH:. python tr_detr/train.py \
@@ -64,7 +71,6 @@ PYTHONPATH=$PYTHONPATH:. python tr_detr/train.py \
 --t_feat_dim ${t_feat_dim} \
 --bsz ${bsz} \
 --results_root ${results_root} \
---exp_id ${exp_id} \
 --lr ${lr} \
 --n_epoch ${n_epoch} \
 --lw_saliency ${lw_saliency} \

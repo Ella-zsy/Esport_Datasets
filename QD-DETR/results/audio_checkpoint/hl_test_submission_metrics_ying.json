@@ -1,10 +1,10 @@
 {
     "brief": {
-        "HL-min-VeryGood-mAP": 17.85,
+        "HL-min-VeryGood-mAP": 17.73,
         "HL-min-VeryGood-Hit1": 16.67
     },
     "HL-min-VeryGood": {
-        "HL-mAP": 17.85,
+        "HL-mAP": 17.73,
         "HL-Hit1": 16.67
     },
     "full": {

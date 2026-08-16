@@ -4,8 +4,8 @@ eval_split_name=$2
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../../.." && pwd)"
 #eval_path="${repo_root}/labels/honor/highlight_${eval_split_name}_release.jsonl"
 #eval_path="${repo_root}/labels/ying/highlight_${eval_split_name}_release.jsonl"
-#eval_path="${repo_root}/labels/dota2/highlight_${eval_split_name}_release.jsonl"
-eval_path="${repo_root}/labels/total/highlight_${eval_split_name}_release.jsonl"
+eval_path="${repo_root}/labels/dota2/highlight_${eval_split_name}_release.jsonl"
+#eval_path="${repo_root}/labels/total/highlight_${eval_split_name}_release.jsonl"
 echo ${ckpt_path}
 echo ${eval_split_name}
 echo ${eval_path}

@@ -1,21 +1,21 @@
-# 电竞视频高光数据集（Esport Datasets）
+# Esports Video Highlight Dataset
 
-本仓库公开了电竞视频高光数据集及论文配套的基准测试资源，包括时序标注、固定的数据集划分、预提取的多模态特征，以及三个基准模型的实现与模型权重。
+This repository contains the public release of an esports video highlight dataset and the benchmark resources associated with the accompanying paper. It includes temporal annotations, fixed dataset splits, pre-extracted multimodal features, adapted implementations of three benchmark models, and model checkpoints.
 
-> 本仓库不提供原始比赛视频。原始视频的获取方式及版权说明请参见[视频来源与版权说明](#视频来源与版权说明)。
+> Raw match videos are not included. See [Video Sources and Copyright](#video-sources-and-copyright) for information about accessing the source videos and the applicable copyright terms.
 
-## 快速开始
+## Quick Start
 
-### 1. 克隆代码仓库
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Ella-zsy/Esport_Datasets.git
 cd Esport_Datasets
 ```
 
-### 2. 从魔搭社区下载数据与模型文件
+### 2. Download the Data and Trained Checkpoints from ModelScope
 
-请先安装并配置能够使用 `ms-hub` 命令的魔搭社区下载工具，然后在仓库根目录执行：
+First, install and configure the ModelScope command-line tool so that the `ms-hub` command is available. Then run the following command from the repository root:
 
 ```bash
 ms-hub download Huiang03/Esport_Datasets \
@@ -23,50 +23,50 @@ ms-hub download Huiang03/Esport_Datasets \
   --local-dir "$(pwd)"
 ```
 
-该命令会将预提取特征、标注文件以及三个基准模型的 checkpoint 下载到当前仓库的对应目录中。下载完成后，仓库结构如下：
+This command downloads the pre-extracted features, annotations, and checkpoints retrained for this project into their corresponding directories. After the download is complete, the repository will have the following structure:
 
 ```text
 Esport_Datasets/
-├── QD-DETR/                 # QD-DETR 代码及模型 checkpoint
-├── TR-DETR/                 # TR-DETR 代码及模型 checkpoint
-├── VideoLights/             # VideoLights 代码及模型 checkpoint
-├── features/                # 预提取的多模态特征
-├── labels/                  # 数据集标注及固定划分
-└── build_env.sh             # 环境安装脚本
+├── QD-DETR/                 # QD-DETR code and model checkpoints
+├── TR-DETR/                 # TR-DETR code and model checkpoints
+├── VideoLights/             # VideoLights code and model checkpoints
+├── features/                # Pre-extracted multimodal features
+├── labels/                  # Annotations and fixed dataset splits
+└── build_env.sh             # Environment setup script
 ```
 
-其中，代码和 `build_env.sh` 来自 GitHub，特征、标注及 checkpoint 由魔搭社区数据集仓库提供。
+The source code and `build_env.sh` are provided through GitHub. The features, annotations, and checkpoints retrained for this project are distributed through the ModelScope dataset repository. To obtain the original-paper checkpoints, follow the instructions in [Downloading the Original-Paper Checkpoints](#downloading-the-original-paper-checkpoints).
 
-### 3. 搭建运行环境
+### 3. Set Up the Environment
 
-请确保系统已安装 Conda，然后在仓库根目录直接运行：
+Make sure Conda is installed, then run the following command from the repository root:
 
 ```bash
 bash build_env.sh
 ```
 
-脚本默认在 Linux x86_64 系统上创建名为 `esport_eval` 的 Conda 环境，并安装 CUDA 版本的依赖。安装完成后激活环境：
+By default, the script creates a Conda environment named `esport_eval` on Linux x86_64 and installs the CUDA dependencies. Activate the environment after installation:
 
 ```bash
 conda activate esport_eval
 ```
 
-## 数据集概览
+## Dataset Overview
 
-本数据集包含来自三个电竞项目的 150 个比赛片段。
+The dataset contains 150 match clips from three esports titles.
 
-| 子数据集 | 目录 | 训练集 | 验证集 | 测试集 | 总计 |
+| Subset | Directory | Train | Validation | Test | Total |
 | --- | --- | ---: | ---: | ---: | ---: |
-| 王者荣耀（Honor of Kings） | `labels/honor/` | 63 | 14 | 13 | 90 |
-| 英雄联盟（League of Legends） | `labels/ying/` | 28 | 6 | 6 | 40 |
+| Honor of Kings | `labels/honor/` | 63 | 14 | 13 | 90 |
+| League of Legends | `labels/ying/` | 28 | 6 | 6 | 40 |
 | Dota 2 | `labels/dota2/` | 14 | 3 | 3 | 20 |
-| 全部数据 | `labels/total/` | 105 | 23 | 22 | 150 |
+| Combined | `labels/total/` | 105 | 23 | 22 | 150 |
 
-`labels/total/` 中的数据是三个游戏子数据集的并集。本仓库提供的训练集、验证集和测试集划分均已固定，不同划分之间不存在重复的 `vid`。
+The files in `labels/total/` are the union of the three game-specific subsets. The released train, validation, and test splits are fixed, and no `vid` appears in more than one split.
 
-## 标注格式
+## Annotation Format
 
-标注以 JSON Lines 格式发布，每一行表示一个比赛片段，例如：
+Annotations are provided in JSON Lines format. Each line contains one match-clip record:
 
 ```json
 {
@@ -80,78 +80,130 @@ conda activate esport_eval
 }
 ```
 
-各字段含义如下：
+The fields are defined as follows:
 
-- `qid`：查询文本的唯一编号。
-- `query`：基准模型使用的文本查询。
-- `duration`：比赛片段的时长，单位为秒，等于 `vid` 中的 `end_time - start_time`。
-- `vid`：原始 YouTube 视频 ID，以及该片段在原视频中的起止时间。
-- `relevant_windows`：高光片段的标注区间，单位为秒；时间相对于当前截取的比赛片段起点计算。
-- `relevant_clip_ids`：相关 2 秒片段的索引。
-- `saliency_scores`：每个 `relevant_clip_ids` 对应的三个显著性分数。
+- `qid`: Unique identifier for the text query.
+- `query`: Text query used by the benchmark models.
+- `duration`: Duration of the match clip in seconds. It equals `end_time - start_time` in `vid`.
+- `vid`: Source YouTube video ID and the start and end times of the clip within that video.
+- `relevant_windows`: Annotated highlight intervals in seconds, relative to the beginning of the extracted match clip.
+- `relevant_clip_ids`: Indices of the relevant 2-second clips.
+- `saliency_scores`: Three saliency scores for each entry in `relevant_clip_ids`.
 
-## 预提取特征
+## Pre-extracted Features
 
-`features/` 目录包含基准模型使用的多模态特征：
+The `features/` directory contains the multimodal features used by the benchmark models:
 
-| 目录 | 模态 | 索引方式 | 格式 |
+| Directory | Modality | Indexing | Format |
 | --- | --- | --- | --- |
-| `features/slowfast_features/` | 视觉（SlowFast） | 每个 `vid` 一个文件 | `.npz` |
-| `features/clip_features/` | 视觉（CLIP） | 每个 `vid` 一个文件 | `.npz` |
-| `features/pann_features/` | 音频（PANN） | 每个 `vid` 一个文件 | `.npy` |
-| `features/clip_text_features/` | 文本（CLIP） | 每个查询一个 `qid<qid>.npz` 文件 | `.npz` |
+| `features/slowfast_features/` | Visual (SlowFast) | One file per `vid` | `.npz` |
+| `features/clip_features/` | Visual (CLIP) | One file per `vid` | `.npz` |
+| `features/pann_features/` | Audio (PANN) | One file per `vid` | `.npy` |
+| `features/clip_text_features/` | Text (CLIP) | One `qid<qid>.npz` file per query | `.npz` |
 
-每种视频或音频特征均包含 150 个文件，文本查询特征也包含 150 个文件。这些特征文件通过上述魔搭社区下载命令获取。
+Each video or audio feature type contains 150 files, and the text-query features also contain 150 files. Use the ModelScope command above to download these files.
 
-## 基准模型
+## Benchmark Models
 
-本仓库提供以下三个经过适配的基准模型实现：
+This repository includes adapted implementations of the following three benchmark models:
 
 - `QD-DETR/`
 - `TR-DETR/`
 - `VideoLights/`
 
-对应的模型 checkpoint 由魔搭社区下载到各模型目录中。有关各项目的代码来源、依赖和许可证，请参阅相应子目录中的 README 与 LICENSE 文件。
+The checkpoints retrained for this project are downloaded from ModelScope, while the original-paper checkpoints must be downloaded separately from the model authors. See the README and license files in each model directory for the corresponding source project, dependencies, and licensing information.
 
-## 复现模型结果
+## Reproducing Model Results
 
-完成数据和 checkpoint 下载并激活环境后，可以运行各模型提供的推理脚本，在测试集上复现本项目的实验结果：
+After downloading the required data and checkpoints, activate the environment before running inference:
 
 ```bash
 conda activate esport_eval
 ```
 
-推理脚本的调用格式统一为：
+All inference scripts follow this general command format:
 
 ```text
-bash <inference.sh> <checkpoint 路径> test
+bash <inference.sh> <checkpoint_path> test
 ```
 
-### Checkpoint 说明
+### Checkpoint Types
 
-本仓库包含两类 checkpoint：
+This release uses two types of checkpoints:
 
-- QD-DETR 的 `results/video_checkpoint/`、`results/audio_checkpoint/`，TR-DETR 的 `checkpoint/checkpoint/`，以及 VideoLights 的 `res/checkpoint/` 保存的是原论文模型，主要用于直接测试原始模型。
-- `honor`、`ying`、`dota2` 和 `total` 对应本项目在四个数据集划分上重新训练得到的模型。复现本项目的实验结果时，应使用这些目录中的 `model_best.ckpt`。
+- `QD-DETR/results/video_checkpoint/`, `QD-DETR/results/audio_checkpoint/`, `TR-DETR/checkpoint/checkpoint/`, and `VideoLights/res/checkpoint/` are reserved for the original-paper models. These weights are used to evaluate the original models on this dataset and must be downloaded separately from the model authors.
+- The `honor`, `ying`, `dota2`, and `total` directories contain models retrained on the four dataset variants in this project. Use the `model_best.ckpt` files in these directories to reproduce this project's experimental results.
 
-QD-DETR 还根据输入模态进一步区分模型目录：
+QD-DETR further distinguishes checkpoints by input modality:
 
-- `*_v`：只使用视觉特征训练的模型。
-- `*_v+a`：同时使用视觉和音频特征训练的模型。
+- `*_v`: Models trained with visual features only.
+- `*_v+a`: Models trained with both visual and audio features.
 
-### QD-DETR
+### Downloading the Original-Paper Checkpoints
 
-QD-DETR 的视觉模型使用 `inference.sh`，视觉与音频模型使用 `inference_audio.sh`。以王者荣耀数据集为例：
+The original-paper checkpoints are large binary files and are not stored directly in this project's GitHub repository. Download them from the locations provided by the respective model authors and save them as shown below:
+
+| Model | Download | Save as |
+| --- | --- | --- |
+| QD-DETR (video + audio) | [Video+Audio Checkpoint](https://www.dropbox.com/s/hsc7jk21ppqasjt/videoaudio.ckpt?dl=0) | `QD-DETR/results/audio_checkpoint/videoaudio.ckpt` |
+| QD-DETR (video only) | [Video-only Checkpoint](https://www.dropbox.com/s/yygwyljw8514d9r/videoonly.ckpt?dl=0) | `QD-DETR/results/video_checkpoint/videoonly.ckpt` |
+| TR-DETR | [TR-DETR Checkpoint](https://raw.githubusercontent.com/mingyao1120/TR-DETR/master/checkpoint/%5BV_SOTA%5Dhl-video_tef-exp-2023_07_24_20_09_00/model_best.ckpt) | `TR-DETR/checkpoint/checkpoint/model_best.ckpt` |
+| VideoLights | [VideoLights Checkpoint](https://drive.google.com/file/d/1psyVph1kNKSKFOxwXjzkeYuO_mbBsLkH/view?usp=drive_link) | `VideoLights/res/checkpoint/model_best.ckpt` |
+
+The TR-DETR checkpoint can be downloaded directly with the following command, run from the repository root:
+
+```bash
+wget -O TR-DETR/checkpoint/checkpoint/model_best.ckpt \
+  'https://raw.githubusercontent.com/mingyao1120/TR-DETR/master/checkpoint/%5BV_SOTA%5Dhl-video_tef-exp-2023_07_24_20_09_00/model_best.ckpt'
+```
+
+Download the QD-DETR and VideoLights checkpoints through the links in the table and place them at the specified paths. Inference also requires the corresponding `opt.json` file in each checkpoint directory; retain the configuration files included with this repository.
+
+After downloading the checkpoints, use the following commands to evaluate the original-paper models:
+
+```bash
+# QD-DETR (video only)
+cd QD-DETR
+bash qd_detr/scripts/inference.sh \
+  results/video_checkpoint/videoonly.ckpt \
+  test
+
+# QD-DETR (video + audio)
+bash qd_detr/scripts/inference_audio.sh \
+  results/audio_checkpoint/videoaudio.ckpt \
+  test
+cd ..
+
+# TR-DETR
+cd TR-DETR
+bash tr_detr/scripts/inference.sh \
+  checkpoint/checkpoint/model_best.ckpt \
+  test
+cd ..
+
+# VideoLights
+cd VideoLights
+bash video_lights/scripts/qvhl/inference.sh \
+  res/checkpoint/model_best.ckpt \
+  test
+cd ..
+```
+
+### Reproducing Results with the Retrained Checkpoints
+
+#### QD-DETR
+
+Use `inference.sh` for the visual-only models and `inference_audio.sh` for the models that use both visual and audio features. The following example evaluates the Honor of Kings checkpoints:
 
 ```bash
 cd QD-DETR
 
-# 仅使用视觉特征
+# Visual features only
 bash qd_detr/scripts/inference.sh \
   results/honor_v/model_best.ckpt \
   test
 
-# 使用视觉和音频特征
+# Visual and audio features
 bash qd_detr/scripts/inference_audio.sh \
   results/honor_v+a/model_best.ckpt \
   test
@@ -159,18 +211,18 @@ bash qd_detr/scripts/inference_audio.sh \
 cd ..
 ```
 
-各数据集对应的 QD-DETR checkpoint 如下：
+The QD-DETR checkpoint paths for each dataset are listed below:
 
-| 数据集 | 仅视觉 | 视觉 + 音频 |
+| Dataset | Video only | Video + audio |
 | --- | --- | --- |
-| 王者荣耀 | `results/honor_v/model_best.ckpt` | `results/honor_v+a/model_best.ckpt` |
-| 英雄联盟 | `results/ying_v/model_best.ckpt` | `results/ying_v+a/model_best.ckpt` |
+| Honor of Kings | `results/honor_v/model_best.ckpt` | `results/honor_v+a/model_best.ckpt` |
+| League of Legends | `results/ying_v/model_best.ckpt` | `results/ying_v+a/model_best.ckpt` |
 | Dota 2 | `results/dota2_v/model_best.ckpt` | `results/dota2_v+a/model_best.ckpt` |
-| 全部数据 | `results/total_v/model_best.ckpt` | `results/total_v+a/model_best.ckpt` |
+| Combined | `results/total_v/model_best.ckpt` | `results/total_v+a/model_best.ckpt` |
 
-### TR-DETR
+#### TR-DETR
 
-以王者荣耀数据集为例：
+The following example evaluates the Honor of Kings checkpoint:
 
 ```bash
 cd TR-DETR
@@ -180,7 +232,7 @@ bash tr_detr/scripts/inference.sh \
 cd ..
 ```
 
-其他数据集对应的 checkpoint 路径为：
+Use the corresponding checkpoint path for each dataset:
 
 ```text
 checkpoint/honor/model_best.ckpt
@@ -189,9 +241,9 @@ checkpoint/dota2/model_best.ckpt
 checkpoint/total/model_best.ckpt
 ```
 
-### VideoLights
+#### VideoLights
 
-以王者荣耀数据集为例：
+The following example evaluates the Honor of Kings checkpoint:
 
 ```bash
 cd VideoLights
@@ -201,7 +253,7 @@ bash video_lights/scripts/qvhl/inference.sh \
 cd ..
 ```
 
-其他数据集对应的 checkpoint 路径为：
+Use the corresponding checkpoint path for each dataset:
 
 ```text
 res/honor/model_best.ckpt
@@ -210,79 +262,54 @@ res/dota2/model_best.ckpt
 res/total/model_best.ckpt
 ```
 
-> 上述脚本需要从对应模型的根目录运行，例如 QD-DETR 脚本需要在 `QD-DETR/` 下运行。直接在仓库根目录调用脚本可能导致 Python 模块或相对路径无法正确解析。
+> Run each inference script from the root directory of its model. For example, run the QD-DETR scripts from `QD-DETR/`. Calling a script directly from the repository root may prevent Python modules or relative paths from being resolved correctly.
 
-### 选择评测数据集
+### Selecting the Evaluation Dataset
 
-如需复现某个数据集的结果，请打开对应的 `inference.sh`，将 `eval_path` 切换为所需目录：
+To reproduce results for a particular dataset, open the relevant `inference.sh` file and set `eval_path` to the corresponding annotation directory:
 
-| 数据集 | 标注目录 |
+| Dataset | Annotation directory |
 | --- | --- |
-| 王者荣耀 | `labels/honor/` |
-| 英雄联盟 | `labels/ying/` |
+| Honor of Kings | `labels/honor/` |
+| League of Legends | `labels/ying/` |
 | Dota 2 | `labels/dota2/` |
-| 全部数据 | `labels/total/` |
+| Combined | `labels/total/` |
 
-checkpoint 和标注必须选择同一个数据集。例如，使用 `results/ying_v/model_best.ckpt` 时，应将脚本中的 `eval_path` 切换到 `labels/ying/`。
+The checkpoint and annotations must correspond to the same dataset. For example, when evaluating `results/ying_v/model_best.ckpt`, set `eval_path` to the test or validation file under `labels/ying/`.
 
-脚本中已经预留了这四种 `eval_path`。保留目标数据集对应的一行，并注释掉其他行即可。checkpoint 目录下的 `opt.json` 保存了训练和推理配置；如果仓库移动到了不同位置，请同时确认其中的 `v_feat_dirs`、`t_feat_dir`（VideoLights 中为 `t_feat_dirs`）、`a_feat_dir` 和 `results_dir` 指向当前仓库中的实际目录。
+All four `eval_path` options are already included in the inference scripts. Uncomment the line for the target dataset and comment out the other lines. Each checkpoint directory also contains an `opt.json` file with the training and inference configuration. If the repository has been moved, make sure that `v_feat_dirs`, `t_feat_dir` (`t_feat_dirs` for VideoLights), `a_feat_dir`, and `results_dir` point to the correct locations in the current repository.
 
-### 软链接与旧绝对路径
-
-部分 checkpoint 附带的 `opt.json` 保存了训练环境中的绝对路径，例如 `/root/New/features/slowfast_features`。当仓库位于其他目录时，推理程序可能找不到特征文件，并报出 `FileNotFoundError`。可以先检查配置和旧路径：
-
-```bash
-grep -E 'v_feat_dirs|t_feat_dir|t_feat_dirs|a_feat_dir|results_dir|/root/' \
-  <checkpoint 目录>/opt.json
-ls -ld /root/New
-```
-
-推荐直接修改对应 checkpoint 目录下的 `opt.json`，将上述路径改为当前仓库中的实际绝对路径。如果不方便逐个修改配置，也可以建立兼容软链接。进入当前 `Esport_Datasets` 仓库根目录后执行：
-
-```bash
-ln -s "$(pwd)" /root/New
-```
-
-例如，仓库位于 `/root/autodl-tmp/Esport_Datasets/` 时，该命令会让旧路径 `/root/New/features/...` 指向当前仓库的 `features/...`。创建后可验证：
-
-```bash
-readlink -f /root/New
-ls /root/New/features
-```
-
-如果 `/root/New` 已经存在，请不要直接覆盖；先使用 `readlink -f /root/New` 检查它是否指向当前仓库。如果它是普通目录或指向其他项目，应优先修改 `opt.json`。在没有 `/root` 写权限的环境中，也应采用修改 `opt.json` 的方式。
-
-推理完成后，预测结果和评测指标将写入 checkpoint 所在的结果目录，主要包括：
+Inference writes the predictions and evaluation metrics to the checkpoint's result directory. The main output files are:
 
 ```text
 hl_test_submission.jsonl
 hl_test_submission_metrics.json
 ```
 
-将命令中的 `test` 替换为 `val` 时，会生成对应的 `hl_val_submission.jsonl` 和指标文件。
+Replace `test` with `val` in an inference command to evaluate the validation split and generate the corresponding `hl_val_submission.jsonl` and metrics file.
 
-## 视频来源与版权说明
+## Video Sources and Copyright
 
-原始比赛视频来自 YouTube 上的官方赛事频道，并继续由原始发布者托管。由于平台运营或版权政策变化，部分视频未来可能无法访问。
+The source match videos were collected from official tournament channels on YouTube and remain hosted by their original publishers. Some videos may become unavailable because of platform operations or changes in copyright policy.
 
-本仓库不重新分发原始视频文件。每条标注通过 `vid` 字段记录其来源视频及时间边界，格式为：
+This repository does not redistribute the raw video files. Each annotation identifies its source video and temporal boundaries through the `vid` field:
 
 ```text
 {youtube_id}_{start_time}_{end_time}
 ```
 
-例如，`1KZ6PPYqcVs_486_1540` 表示 YouTube 视频 `1KZ6PPYqcVs` 中从第 486 秒到第 1540 秒的片段，其来源页面为：
+For example, `1KZ6PPYqcVs_486_1540` refers to the segment from 486 to 1540 seconds in the YouTube video with ID `1KZ6PPYqcVs`. The source page is:
 
 ```text
 https://www.youtube.com/watch?v=1KZ6PPYqcVs
 ```
 
-由于 YouTube ID 本身可能包含下划线，解析 `vid` 时应从右侧的最后两个下划线分隔项读取 `start_time` 和 `end_time`。
+Because a YouTube ID may itself contain underscores, parse `start_time` and `end_time` from the two rightmost underscore-separated components of `vid`.
 
-如需获取原始视频，请前往对应的官方来源，并遵守 YouTube 服务条款及相关发布者的版权政策。本仓库不保证原始视频始终可用。
+Users who need the original videos must obtain them from the corresponding official sources and comply with YouTube's terms of service and the copyright policies of the original publishers. This repository does not guarantee the continued availability of any source video.
 
-## 发布范围与许可证
+## Release Scope and Licenses
 
-本数据集用于支持科研复现。本仓库的发布不代表授予用户对原始视频、赛事转播、商标或其他由原始发布者所有的内容的任何权利。
+This dataset is released to support research reproducibility. The release does not grant any rights to the source videos, tournament broadcasts, trademarks, or other content owned by the original publishers.
 
-各基准模型代码分别遵循其子目录中的许可证。如在研究中使用本仓库提供的标注或特征，请引用对应论文。
+The benchmark implementations are governed by the license files in their respective subdirectories. Please cite the accompanying paper when using the annotations or features provided in this repository.

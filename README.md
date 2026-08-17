@@ -227,7 +227,7 @@ The following example evaluates the Honor of Kings checkpoint:
 ```bash
 cd TR-DETR
 bash tr_detr/scripts/inference.sh \
-  checkpoint/honor/model_best.ckpt \
+  checkpoint/honor_v/model_best.ckpt \
   test
 cd ..
 ```
@@ -235,10 +235,10 @@ cd ..
 Use the corresponding checkpoint path for each dataset:
 
 ```text
-checkpoint/honor/model_best.ckpt
-checkpoint/ying/model_best.ckpt
-checkpoint/dota2/model_best.ckpt
-checkpoint/total/model_best.ckpt
+checkpoint/honor_v/model_best.ckpt
+checkpoint/ying_v/model_best.ckpt
+checkpoint/dota2_v/model_best.ckpt
+checkpoint/total_v/model_best.ckpt
 ```
 
 #### VideoLights
@@ -248,7 +248,7 @@ The following example evaluates the Honor of Kings checkpoint:
 ```bash
 cd VideoLights
 bash video_lights/scripts/qvhl/inference.sh \
-  res/honor/model_best.ckpt \
+  res/honor_v/model_best.ckpt \
   test
 cd ..
 ```
@@ -256,10 +256,10 @@ cd ..
 Use the corresponding checkpoint path for each dataset:
 
 ```text
-res/honor/model_best.ckpt
-res/ying/model_best.ckpt
-res/dota2/model_best.ckpt
-res/total/model_best.ckpt
+res/honor_v/model_best.ckpt
+res/ying_v/model_best.ckpt
+res/dota2_v/model_best.ckpt
+res/total_v/model_best.ckpt
 ```
 
 > Run each inference script from the root directory of its model. For example, run the QD-DETR scripts from `QD-DETR/`. Calling a script directly from the repository root may prevent Python modules or relative paths from being resolved correctly.
